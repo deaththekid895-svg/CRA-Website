@@ -352,6 +352,10 @@ function help() {
     );
 
     print(
+        "ASR <ASSESSOR ID>"
+    );
+    
+    print(
         "ADJ <ADJUSTER ID>"
     );
 
@@ -564,6 +568,11 @@ function showMaster(
     );
 
     field(
+        "ASSESSOR",
+        c.assessorId
+    );
+    
+    field(
         "TRIBUNAL",
         c.tribunalId
     );
@@ -711,6 +720,226 @@ function showAuditor(
     }
 }
 
+/* =========================================================
+   ASSESSOR RECORD
+========================================================= */
+
+function showAssessor(
+    c
+) {
+
+    section(
+        "ASSESSOR RECORD"
+    );
+
+    field(
+        "ASSESSOR",
+        c.assessorId
+    );
+
+    field(
+        "FORM",
+        "ASR-29.4"
+    );
+
+    field(
+        "SUBJECT",
+        c.name
+    );
+
+    print();
+
+    print(
+        "REVIEW OF SELF-ACCOUNT:",
+        "bright"
+    );
+
+    print(
+        `SUBJECT'S SELF-JUSTIFICATION ON RECORD: "${c.selfJustification}"`
+    );
+
+    print();
+
+    const falsehoods =
+        c.contradictions.filter(
+            entry =>
+                entry.category === "FALSEHOOD"
+        );
+
+    const falseMemories =
+        c.contradictions.filter(
+            entry =>
+                entry.category === "FALSE_MEMORY"
+        );
+
+    const unclear =
+        c.contradictions.filter(
+            entry =>
+                entry.category === "UNCLEAR"
+        );
+
+    const beyond =
+        c.contradictions.filter(
+            entry =>
+                entry.category === "IMPOSSIBLE"
+        );
+
+    print(
+        "FALSEHOODS IDENTIFIED:",
+        "bright"
+    );
+
+    if (
+        falsehoods.length === 0
+    ) {
+
+        print(
+            "NONE IDENTIFIED."
+        );
+
+    } else {
+
+        for (
+            const entry
+            of falsehoods
+        ) {
+
+            print(
+                entry.description
+            );
+        }
+    }
+
+    print();
+
+    print(
+        "FALSE MEMORY IDENTIFIED:",
+        "bright"
+    );
+
+    if (
+        falseMemories.length === 0
+    ) {
+
+        print(
+            "NONE IDENTIFIED."
+        );
+
+    } else {
+
+        for (
+            const entry
+            of falseMemories
+        ) {
+
+            print(
+                entry.description
+            );
+        }
+    }
+
+    print();
+
+    print(
+        "UNCLEAR CIRCUMSTANCES:",
+        "bright"
+    );
+
+    if (
+        unclear.length === 0
+    ) {
+
+        print(
+            "NONE."
+        );
+
+    } else {
+
+        for (
+            const entry
+            of unclear
+        ) {
+
+            print(
+                entry.description
+            );
+        }
+    }
+
+    print();
+
+    print(
+        "BEYOND ASSESSMENT:",
+        "bright"
+    );
+
+    if (
+        beyond.length === 0
+    ) {
+
+        print(
+            "NONE."
+        );
+
+    } else {
+
+        for (
+            const entry
+            of beyond
+        ) {
+
+            print(
+                entry.description
+            );
+        }
+    }
+
+    print();
+
+    print(
+        "ASSESSOR NOTE:",
+        "bright"
+    );
+
+    if (
+        falseMemories.length > 0 &&
+        falsehoods.length > 0
+    ) {
+
+        print(
+            "SUBJECT'S ACCOUNT CONTAINS BOTH GENUINE MEMORY DISTORTION AND KNOWING MISSTATEMENT."
+        );
+
+    } else if (
+        falseMemories.length > 0
+    ) {
+
+        print(
+            "SUBJECT'S DISCREPANCIES CONSISTENT WITH GENUINE MEMORY DISTORTION, NOT DECEPTION."
+        );
+
+    } else if (
+        falsehoods.length > 0
+    ) {
+
+        print(
+            "SUBJECT'S ACCOUNT CONTAINS KNOWING MISSTATEMENT(S)."
+        );
+
+    } else {
+
+        print(
+            "SUBJECT'S ACCOUNT REVIEWED. NO DISCREPANCY OF EITHER KIND FOUND."
+        );
+    }
+
+    print();
+
+    print(
+        "ASSESSMENT OUTCOME: CLEARED FOR ADJUSTMENT",
+        "good"
+    );
+}
 
 /* =========================================================
    ADJUSTER RECORD
@@ -1644,6 +1873,51 @@ function commandAuditor(
     );
 }
 
+/* =========================================================
+   ASSESSOR SEARCH
+========================================================= */
+
+function commandAssessor(
+    argument
+) {
+
+    if (
+        !argument
+    ) {
+
+        print(
+            "SYNTAX: ASR <ASSESSOR ID>",
+            "warn"
+        );
+
+        return;
+    }
+
+
+    const c =
+        DB.findByPersonnel(
+            argument,
+            "assessorId"
+        );
+
+
+    if (
+        !c
+    ) {
+
+        print(
+            "ASSESSOR RECORD NOT FOUND IN CURRENT INDEX STATE.",
+            "warn"
+        );
+
+        return;
+    }
+
+
+    showAssessor(
+        c
+    );
+}
 
 /* =========================================================
    ADJUSTER SEARCH
@@ -2045,6 +2319,13 @@ function executeCommand(
 
             break;
 
+        case "ASR":
+
+            commandAssessor(
+                argument
+            );
+
+            break;
 
         case "ADJ":
 
