@@ -1789,7 +1789,7 @@ function commandTrace(
    HISTORY COMMAND
 ========================================================= */
 
-function commandHistory(
+function commandHistoryCommand(
     argument
 ) {
 
@@ -2075,7 +2075,7 @@ function executeCommand(
 
         case "HISTORY":
 
-            commandHistory(
+            commandHistoryCommand(
                 argument
             );
 
