@@ -1546,7 +1546,7 @@ function commandSoul(
 
     print();
 
-    showMaster(
+    showRecord(
         c
     );
 }
