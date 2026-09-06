@@ -913,6 +913,25 @@ const IMPOSSIBLE_CONTRADICTIONS = [
     "MEMORY PERSISTING AFTER SUBJECT DEATH"
 ];
 
+const FALSEHOOD_TYPES = [
+
+    "CONFESSION CONFLICT",
+    "INTENT CONFLICT",
+    "MOTIVE CONFLICT"
+
+];
+
+
+const FALSE_MEMORY_TYPES = [
+
+    "MEMORY CONFLICT",
+    "WITNESS MEMORY CONFLICT",
+    "EMOTIONAL RESPONSE CONFLICT",
+    "SELF-IDENTIFICATION CONFLICT",
+    "UNRESOLVED RECOLLECTION"
+
+];
+
 
 const RELATION_TYPES = [
 
@@ -1243,6 +1262,19 @@ function makeAdjusterId(rng) {
     );
 }
 
+function makeAssessorId(rng) {
+
+    return (
+        "ASR-" +
+        pad(
+            rng.range(
+                1,
+                999999
+            ),
+            6
+        )
+    );
+}
 
 function makeTribunalId(rng) {
 
@@ -1390,6 +1422,40 @@ function generateContradictions(
                 );
         }
 
+                let category;
+
+        if (
+            impossible
+        ) {
+
+            category =
+                "IMPOSSIBLE";
+
+        } else if (
+            FALSEHOOD_TYPES.includes(
+                type
+            )
+        ) {
+
+            category =
+                "FALSEHOOD";
+
+        } else if (
+            FALSE_MEMORY_TYPES.includes(
+                type
+            )
+        ) {
+
+            category =
+                "FALSE_MEMORY";
+
+        } else {
+
+            category =
+                "UNCLEAR";
+        }
+
+
         contradictions.push({
 
             id:
@@ -1401,6 +1467,8 @@ function generateContradictions(
             type,
 
             impossible,
+
+            category,
 
             description,
 
@@ -1961,6 +2029,9 @@ function generateCase(
     const auditorId =
         makeAuditorId(rng);
 
+    const assessorId =
+        makeAssessorId(rng);
+    
     const adjusterId =
         makeAdjusterId(rng);
 
@@ -2040,6 +2111,13 @@ function generateCase(
                     : "CLEAR"
         },
 
+             {
+            id: "ASR-29.4",
+            title: "AUDIT ASSESSMENT AND CLARIFICATION",
+            office: "ASSESSOR",
+            status: "COMPLETE"
+        },
+        
         {
             id: "ADJ-02.3",
             title: "RECORD CODIFICATION",
@@ -2313,6 +2391,11 @@ function generateCase(
         auditorId
     );
 
+        addTransaction(
+        "ASSESS",
+        "ASSESSOR REVIEWED AUDITOR FINDINGS FOR CLARITY AND CONSISTENCY.",
+        assessorId
+    );
 
     addTransaction(
         "ADJUST",
@@ -2404,7 +2487,9 @@ function generateCase(
         auditorId,
 
         adjusterId,
-
+        
+        assessorId,
+        
         tribunalId,
 
         decreeId,
