@@ -508,8 +508,8 @@ function showMaster(
     );
 
     field(
-        "SEX",
-        c.sex
+        "GENDER",
+        c.gender
     );
 
     field(
