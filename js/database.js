@@ -2905,7 +2905,7 @@ function generateCase(
         -----------------------------------------------------
     */
 
-        const gender =
+        let gender =
         rng.pick([
             "MALE",
             "FEMALE",
@@ -2915,12 +2915,38 @@ function generateCase(
 
     let fullName;
 
-    if (requestedName) {
+       if (requestedName) {
 
         fullName =
             titleCaseName(
                 requestedName
             );
+
+        const typedFirstName =
+            titleCaseName(
+                requestedName
+                    .trim()
+                    .split(/\s+/)[0]
+            );
+
+        if (
+            MALE_FIRST_NAMES.includes(
+                typedFirstName
+            )
+        ) {
+
+            gender =
+                "MALE";
+
+        } else if (
+            FEMALE_FIRST_NAMES.includes(
+                typedFirstName
+            )
+        ) {
+
+            gender =
+                "FEMALE";
+        }
 
     } else {
 
