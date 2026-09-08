@@ -375,6 +375,14 @@ function help() {
         "CONTRADICT <SOUL NUMBER>"
     );
 
+        print(
+        "DEC <DECREE ID>"
+    );
+
+    print(
+        "IMP <IMPLEMENTATION ID>"
+    );
+    
     print(
         "TXN <TRANSACTION ID>"
     );
@@ -1217,6 +1225,165 @@ function showTribunal(
     }
 }
 
+/* =========================================================
+   FINAL DECREE
+========================================================= */
+
+function showDecree(
+    c
+) {
+
+    section(
+        "FINAL DECREE"
+    );
+
+    field(
+        "DECREE",
+        c.decreeId
+    );
+
+    field(
+        "FORM",
+        "TRB-09.9"
+    );
+
+    field(
+        "SUBJECT",
+        c.name
+    );
+
+    field(
+        "CASE NUMBER",
+        c.caseNumber
+    );
+
+    print();
+
+    print(
+        `THIS DECREE CONFIRMS THE SENTENCE ISSUED BY TRIBUNAL ${c.tribunalId}.`
+    );
+
+    print();
+
+    print(
+        "SENTENCING CLASS:",
+        "bright"
+    );
+
+    print(
+        c.sentencingClass
+    );
+
+    print();
+
+    print(
+        "SENTENCE TYPE:",
+        "bright"
+    );
+
+    print(
+        c.sentenceType
+    );
+
+    print();
+
+    print(
+        "DURATION:",
+        "bright"
+    );
+
+    if (
+        c.sentenceYears > 0
+    ) {
+
+        print(
+            formatDuration(
+                c.sentenceYears
+            )
+        );
+
+    } else {
+
+        print(
+            "NOT REPRESENTABLE AS LINEAR YEARS."
+        );
+    }
+
+    print();
+
+    print(
+        "TRIBUNAL FINDING ON RECORD:",
+        "bright"
+    );
+
+    print(
+        c.tribunalFinding
+    );
+
+    print();
+
+    print(
+        "DECREE STATUS: CONFIRMED AND ENTERED INTO RECORD",
+        "good"
+    );
+}
+
+
+/* =========================================================
+   IMPLEMENTATION RECORD
+========================================================= */
+
+function showImplementation(
+    c
+) {
+
+    section(
+        "IMPLEMENTATION RECORD"
+    );
+
+    field(
+        "IMPLEMENTATION",
+        c.implementationId
+    );
+
+    field(
+        "FORM",
+        "IMP-04.2"
+    );
+
+    field(
+        "SUBJECT",
+        c.name
+    );
+
+    print();
+
+    print(
+        `THIS RECORD CONFIRMS EXECUTION OF DECREE ${c.decreeId}.`
+    );
+
+    print();
+
+    print(
+        "SENTENCE CONFIRMED:",
+        "bright"
+    );
+
+    print(
+        `${c.sentencingClass} / ${c.sentenceType}`
+    );
+
+    print();
+
+    print(
+        "IMPLEMENTATION FINDING:",
+        "bright"
+    );
+
+    print(
+        c.implementationFinding
+    );
+}
 
 /* =========================================================
    CONTRADICTIONS
@@ -2104,6 +2271,98 @@ function commandHistoryCommand(
     );
 }
 
+/* =========================================================
+   DECREE COMMAND
+========================================================= */
+
+function commandDecree(
+    argument
+) {
+
+    if (
+        !argument
+    ) {
+
+        print(
+            "SYNTAX: DEC <DECREE ID>",
+            "warn"
+        );
+
+        return;
+    }
+
+
+    const c =
+        DB.findByPersonnel(
+            argument,
+            "decreeId"
+        );
+
+
+    if (
+        !c
+    ) {
+
+        print(
+            "DECREE RECORD NOT FOUND IN CURRENT INDEX STATE.",
+            "warn"
+        );
+
+        return;
+    }
+
+
+    showDecree(
+        c
+    );
+}
+
+
+/* =========================================================
+   IMPLEMENTATION COMMAND
+========================================================= */
+
+function commandImplementation(
+    argument
+) {
+
+    if (
+        !argument
+    ) {
+
+        print(
+            "SYNTAX: IMP <IMPLEMENTATION ID>",
+            "warn"
+        );
+
+        return;
+    }
+
+
+    const c =
+        DB.findByPersonnel(
+            argument,
+            "implementationId"
+        );
+
+
+    if (
+        !c
+    ) {
+
+        print(
+            "IMPLEMENTATION RECORD NOT FOUND IN CURRENT INDEX STATE.",
+            "warn"
+        );
+
+        return;
+    }
+
+
+    showImplementation(
+        c
+    );
+}
 
 /* =========================================================
    CONTRADICTION COMMAND
@@ -2371,6 +2630,22 @@ function executeCommand(
 
             break;
 
+                    case "DEC":
+
+            commandDecree(
+                argument
+            );
+
+            break;
+
+
+        case "IMP":
+
+            commandImplementation(
+                argument
+            );
+
+            break;
 
         case "TXN":
 
